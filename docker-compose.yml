@@ -1,0 +1,35 @@
+version: '3'
+services:
+  redis:
+    container_name: redis
+    image: redis:6.0.9-alpine #alpine 容器佔用空間較小，通常建議使用
+    ports:
+      - "6379:6379"
+    restart: always
+
+  nginx:
+    container_name: nginx
+    build: ./.nginx
+    restart: always
+    ports:
+      # - "8080:80"
+      - "80:80"
+      # - "443:443"
+    volumes:
+      - .:/mydownloader
+      - ./log:/var/log/nginx
+    depends_on:
+      - api
+
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: .django/Dockerfile
+    command: uwsgi --ini uwsgi.ini
+    restart: always
+    volumes:
+      - .:/mydownloader
+      # (HOST:CONTAINER)
+    depends_on:
+      - redis
