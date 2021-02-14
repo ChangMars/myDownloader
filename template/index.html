@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+    {% load static %}
+    * {
+      font-family: sans-serif;
+    }
+    body {
+      text-align: center;
+      background: url('{% static "imgs/bg1.JPG" %}');
+      background-size: cover;
+      color: white;
+    }
+    h1 {
+        font-size:60px;
+        margin:110px 0 0 0;
+    }
+    p {
+      font-size: 30px;
+      margin: 15px 0 0 0;
+    }
+    input {
+      font-size: 18px;
+      margin: 20px 0 0 0;
+      border: 0;
+      padding: 10px;
+    }
+    input[type="submit"] {
+      background: rgb(233, 30, 99);
+      color: white;
+      width:100px;
+      height:50px;
+      font-size:18px;
+    }
+    </style>
+    <meta charset="UTF-8">
+    <title>m3u8 Downloader</title>
+</head>
+<body>
+    <h1>M3U8 下載器</h1>
+    <p>請將下載.m3u8的文件檔網址貼至下方欄位中，點選轉檔即可。</p>
+<!--    <input type="submit" value="轉檔" onclick="test('test');">-->
+<!--    <input type="button" name="test" value="test" onclick="showAlert('test');">-->
+    <form method='GET' action=m3u8download>
+        <input name='url' placeholder="請貼上m3u8檔案網址" size="50"/>
+<!--        <input name="name" value="123" hidden="true"/>-->
+        <input type="submit" />
+    </form>
+</body>
+<script type="text/javascript">
+</script>
+</html>

@@ -128,9 +128,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/
 
 #download dir
 m3u8_download/
+static/
 
 #docker
 *.sock

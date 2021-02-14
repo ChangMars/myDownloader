@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% load static %}
+    <video controls>
+        <source src="{% static name %}" type="video/mp4"/>
+        影片無法播放，請改用別的瀏覽器，或將影片
+    </video>
+    <a href="{% static name %}" download="{% static name %}">下載</a>
+</body>
+</html>

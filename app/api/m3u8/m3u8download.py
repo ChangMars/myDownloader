@@ -4,29 +4,33 @@ import shutil
 import threading
 import requests
 
-from django.http import HttpResponse
+from django.shortcuts import render
 from rest_framework.views import APIView
+
+from app.models import get_uuid
 from mydownloader.settings import BASE_DIR
 
 class M3u8downloadAPIView(APIView):
     def get(self, request):
         url = request.GET['url']
-        name = request.GET['name']
-        currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
-        downloadresult = self.downloadm3u8(url, currentname)
-        return downloadresult
+        # name = request.GET['name']
+        # currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
+        name = self.downloadm3u8(url)
+        return render(request, 'video.html',locals())
 
-    def downloadm3u8(self, m3u8listUrl, fileName):
+    def downloadm3u8(self, m3u8listUrl, fileName=""):
+        if(fileName == ""):
+            fileName = get_uuid().__str__()
         print(m3u8listUrl)
         maxexecutenum = 5
         mysession = requests.session()
         tsUrl = m3u8listUrl.split('?')[0]
         videoTag = tsUrl.split("/")[-1]
-        rests = mysession.get(m3u8listUrl, headers={"User-Agent": "Mozilla/5.0"},verify=False)  # 獲取.ts list網址
-        folder_path = str(BASE_DIR) + '/m3u8_download/' + fileName + '/'
+        rests = mysession.get(m3u8listUrl, headers={"User-Agent": "Mozilla/5.0"})  # 獲取.ts list網址
+        folder_path = str(BASE_DIR) + '//m3u8_download//' + fileName + '//'
         print(folder_path)
 
-        upfolder_path = str(BASE_DIR) + '/m3u8_download/result/'
+        upfolder_path = str(BASE_DIR) + '//static//result//'
         if os.path.exists(folder_path) == False:  # 判斷資料夾是否存在
             os.makedirs(folder_path)  # 創建資料夾
 
@@ -49,6 +53,7 @@ class M3u8downloadAPIView(APIView):
             file.close()
         print(aryts)
         print(arytsfilename)
+        # return fileName + ".mp4"
         threads = []
         for ts, name in zip(aryts, arytsfilename):  # 下載ts列表
             print(ts,name)
@@ -66,10 +71,10 @@ class M3u8downloadAPIView(APIView):
         threads.clear()
         self.alltscombination(folder_path, fileName, upfolder_path)  # 將所有.ts合併成mp4
         shutil.rmtree(folder_path)  # 移除下載.ts的資料夾
-        return HttpResponse("Download Success")
+        return "//result//" + fileName + ".mp4"
 
     def downloadtsfile(self, url, filename, folder_path=None):
-        response = requests.get(url, stream=True,verify=False)
+        response = requests.get(url, stream=True)
         if response.status_code == 200:
             if folder_path != None:
                 if os.path.exists(folder_path) == False:  # 判斷資料夾是否存在

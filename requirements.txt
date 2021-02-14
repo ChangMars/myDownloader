@@ -5,3 +5,4 @@ fake-useragent==0.1.11
 celery==5.0.5
 redis==3.5.3
 uWSGI==2.0.19.1
+uuid==1.30
