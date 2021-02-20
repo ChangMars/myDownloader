@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: .django/Dockerfile
-    command: uwsgi --ini uwsgi.ini
+    command: uwsgi --ini dockeruwsgi.ini
     restart: always
     volumes:
       - .:/mydownloader
