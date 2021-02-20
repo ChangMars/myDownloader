@@ -132,7 +132,7 @@ dmypy.json
 
 #download dir
 m3u8_download/
-static/
+static/result/
 
 #docker
 *.sock
