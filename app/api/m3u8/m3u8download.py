@@ -3,9 +3,12 @@ import re
 import shutil
 import threading
 import requests
+from django.http import HttpResponse
 
 from django.shortcuts import render
+from requests import Response
 from rest_framework.views import APIView
+from werkzeug.wsgi import FileWrapper
 
 from app.models import get_uuid
 from mydownloader.settings import BASE_DIR
@@ -15,8 +18,13 @@ class M3u8downloadAPIView(APIView):
         url = request.GET['url']
         # name = request.GET['name']
         # currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
-        name = self.downloadm3u8(url)
-        return render(request, 'video.html',locals())
+        # name = self.downloadm3u8(url)
+        # return render(request, 'video.html',locals())
+        file_path = self.downloadm3u8()
+        videofile = open(file_path, 'rb')  # 讀取tslist
+        response = HttpResponse(FileWrapper(videofile), content_type='application/video')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % 'video.mp4'
+        return response
 
     def downloadm3u8(self, m3u8listUrl, fileName=""):
         if(fileName == ""):
@@ -71,7 +79,8 @@ class M3u8downloadAPIView(APIView):
         threads.clear()
         self.alltscombination(folder_path, fileName, upfolder_path)  # 將所有.ts合併成mp4
         shutil.rmtree(folder_path)  # 移除下載.ts的資料夾
-        return "//result//" + fileName + ".mp4"
+        # return "//result//" + fileName + ".mp4"
+        return upfolder_path + fileName + ".mp4"
 
     def downloadtsfile(self, url, filename, folder_path=None):
         response = requests.get(url, stream=True)
