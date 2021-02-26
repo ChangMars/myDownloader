@@ -20,7 +20,7 @@ class M3u8downloadAPIView(APIView):
         # currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
         # name = self.downloadm3u8(url)
         # return render(request, 'video.html',locals())
-        file_path = self.downloadm3u8()
+        file_path = self.downloadm3u8(url)
         videofile = open(file_path, 'rb')  # 讀取tslist
         response = HttpResponse(FileWrapper(videofile), content_type='application/video')
         response['Content-Disposition'] = 'attachment; filename="%s"' % 'video.mp4'
