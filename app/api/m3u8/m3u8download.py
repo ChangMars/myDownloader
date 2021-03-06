@@ -35,10 +35,10 @@ class M3u8downloadAPIView(APIView):
         tsUrl = m3u8listUrl.split('?')[0]
         videoTag = tsUrl.split("/")[-1]
         rests = mysession.get(m3u8listUrl, headers={"User-Agent": "Mozilla/5.0"})  # 獲取.ts list網址
-        folder_path = str(BASE_DIR) + '//m3u8_download//' + fileName + '//'
+        folder_path = str(BASE_DIR) + '\\m3u8_download\\' + fileName + '\\'
         print(folder_path)
 
-        upfolder_path = str(BASE_DIR) + '//static//result//'
+        upfolder_path = str(BASE_DIR) + '\\static\\result\\'
         if os.path.exists(folder_path) == False:  # 判斷資料夾是否存在
             os.makedirs(folder_path)  # 創建資料夾
 

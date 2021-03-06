@@ -9,11 +9,9 @@ from mydownloader.settings import BASE_DIR
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        print("test success")
-        return
-        url = 'https://cdn-ms.porn5f.com/video_path_m3u8/jEX1KFJvreK4djKjPY2iZw/3218591610/hls/iphone/61273.mp4/index.m3u8?e=1612982311&st=4Ek6lGEs0Ft2t7jBaX3uNw'
+        url = 'https://cp3.hboav.com/check/hbo7/hls/files/mp4/B/h/K/BhKKX.mp4/index.m3u8?key=Lyl6f_9Es-grPLsTDITshg&expires=1614791358'
         # url = 'https://fdc.91p49.com//m3u8/429024/429024.m3u8?st=DXSN1P87-e7-lOszaZ-19Q&e=1612974034&f=0b016qJEsOGQQbi3KF8JXHbivaGsxy/bPk1Yg0nrJsRpIQ7/qv2f157uBKiTGwId1zC4pTsZvs7GpHbAaJnYBoZ1uf2giFXc6bVEDg46BxjWS3weROnrk/ahcDeIIMN7hp1vQg'
-        name = 'TikToker【奔跑晶骡子】超性感大尺度漂亮美乳制服诱惑'
+        name = '步賓探花今晚約個高顏值好身材牛仔褲大奶妹啪啪'
         currentname = re.sub('[\/:*?"<>|]', " ",name)  # 獲取標題 以window檔案命名規則 當作檔名
         self.downloadm3u8(url,currentname)
 
