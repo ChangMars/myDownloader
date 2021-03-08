@@ -1,19 +1,30 @@
 import os
+import random
 import re
 import shutil
 import threading
+import urllib
+
 import requests
+from bs4 import BeautifulSoup
 
 from django.core.management import BaseCommand
+from fake_useragent import UserAgent
+from socks import ProxyError
+
+from app.module.utils.load_proxies_list import load_proxies_list, get_random_proxies
 from mydownloader.settings import BASE_DIR
+proxies_data = []
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        url = 'https://cp3.hboav.com/check/hbo7/hls/files/mp4/B/h/K/BhKKX.mp4/index.m3u8?key=Lyl6f_9Es-grPLsTDITshg&expires=1614791358'
-        # url = 'https://fdc.91p49.com//m3u8/429024/429024.m3u8?st=DXSN1P87-e7-lOszaZ-19Q&e=1612974034&f=0b016qJEsOGQQbi3KF8JXHbivaGsxy/bPk1Yg0nrJsRpIQ7/qv2f157uBKiTGwId1zC4pTsZvs7GpHbAaJnYBoZ1uf2giFXc6bVEDg46BxjWS3weROnrk/ahcDeIIMN7hp1vQg'
-        name = '步賓探花今晚約個高顏值好身材牛仔褲大奶妹啪啪'
-        currentname = re.sub('[\/:*?"<>|]', " ",name)  # 獲取標題 以window檔案命名規則 當作檔名
-        self.downloadm3u8(url,currentname)
+        # url = 'https://cp3.hboav.com/check/hbo7/hls/files/mp4/B/h/K/BhKKX.mp4/index.m3u8?key=Lyl6f_9Es-grPLsTDITshg&expires=1614791358'
+        # # url = 'https://fdc.91p49.com//m3u8/429024/429024.m3u8?st=DXSN1P87-e7-lOszaZ-19Q&e=1612974034&f=0b016qJEsOGQQbi3KF8JXHbivaGsxy/bPk1Yg0nrJsRpIQ7/qv2f157uBKiTGwId1zC4pTsZvs7GpHbAaJnYBoZ1uf2giFXc6bVEDg46BxjWS3weROnrk/ahcDeIIMN7hp1vQg'
+        # name = '步賓探花今晚約個高顏值好身材牛仔褲大奶妹啪啪'
+        # currentname = re.sub('[\/:*?"<>|]', " ",name)  # 獲取標題 以window檔案命名規則 當作檔名
+        # self.downloadm3u8(url,currentname)
+        load_proxies_list()
+        print(get_random_proxies())
 
     def downloadm3u8(self, m3u8listUrl, fileName):
         print(m3u8listUrl)
