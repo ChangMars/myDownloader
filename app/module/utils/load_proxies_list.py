@@ -183,10 +183,10 @@ def load_proxies_list():
         proxies_data += load_proxies_list_by_httptunnel()
     except Exception as e:
         print('load_proxies_list_by_httptunnel():', e)
-    try:
-        proxies_data += load_proxies_list_by_proxydb()
-    except Exception as e:
-        print('load_proxies_list_by_proxydb():', e)
+    # try:
+    #     proxies_data += load_proxies_list_by_proxydb()
+    # except Exception as e:
+    #     print('load_proxies_list_by_proxydb():', e)
     # try:
     #     result += load_proxies_list_by_free_proxy_lists_net(result)
     # except Exception as e:

@@ -12,6 +12,7 @@ from werkzeug.wsgi import FileWrapper
 
 from app.models import get_uuid
 from mydownloader.settings import BASE_DIR
+from app.module.utils.load_proxies_list import load_proxies_list, get_random_proxies
 
 class M3u8downloadAPIView(APIView):
     def get(self, request):
@@ -34,7 +35,10 @@ class M3u8downloadAPIView(APIView):
         mysession = requests.session()
         tsUrl = m3u8listUrl.split('?')[0]
         videoTag = tsUrl.split("/")[-1]
-        rests = mysession.get(m3u8listUrl, headers={"User-Agent": "Mozilla/5.0"})  # 獲取.ts list網址
+        load_proxies_list()
+        proxy = get_random_proxies()
+        print(proxy)
+        rests = mysession.get(m3u8listUrl, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxy)  # 獲取.ts list網址
         folder_path = str(BASE_DIR) + '//m3u8_download//' + fileName + '//'
         print(folder_path)
 
