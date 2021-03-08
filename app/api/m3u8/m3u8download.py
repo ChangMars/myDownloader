@@ -6,6 +6,7 @@ import requests
 from django.http import HttpResponse
 
 from django.shortcuts import render
+from fake_useragent import UserAgent
 from requests import Response
 from rest_framework.views import APIView
 from werkzeug.wsgi import FileWrapper
@@ -13,6 +14,7 @@ from werkzeug.wsgi import FileWrapper
 from app.models import get_uuid
 from mydownloader.settings import BASE_DIR
 from app.module.utils.load_proxies_list import load_proxies_list, get_random_proxies
+
 
 class M3u8downloadAPIView(APIView):
     def get(self, request):
@@ -27,6 +29,15 @@ class M3u8downloadAPIView(APIView):
         response['Content-Disposition'] = 'attachment; filename="%s"' % 'video.mp4'
         return response
 
+    def getHeader(self):
+        return {
+            'User-Agent': UserAgent().random,
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, deflate, sdch',
+            'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4',
+            # 'If-Modified-Since': 'Tue, 01 Nov 2016 07:29:02 GMT'
+        }
+
     def downloadm3u8(self, m3u8listUrl, fileName=""):
         if(fileName == ""):
             fileName = get_uuid().__str__()
@@ -38,7 +49,7 @@ class M3u8downloadAPIView(APIView):
         load_proxies_list()
         proxy = get_random_proxies()
         print(proxy)
-        rests = mysession.get(m3u8listUrl, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxy)  # 獲取.ts list網址
+        rests = mysession.get(m3u8listUrl, headers=self.getHeader(), proxies=proxy)  # 獲取.ts list網址
         folder_path = str(BASE_DIR) + '//m3u8_download//' + fileName + '//'
         print(folder_path)
 
