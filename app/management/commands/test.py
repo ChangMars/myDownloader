@@ -3,18 +3,10 @@ import random
 import re
 import shutil
 import threading
-import urllib
-
 import requests
-from bs4 import BeautifulSoup
-
 from django.core.management import BaseCommand
 from fake_useragent import UserAgent
-from socks import ProxyError
-
-from app.module.utils.load_proxies_list import load_proxies_list, get_random_proxies
 from mydownloader.settings import BASE_DIR
-proxies_data = []
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -23,8 +15,7 @@ class Command(BaseCommand):
         # name = '步賓探花今晚約個高顏值好身材牛仔褲大奶妹啪啪'
         # currentname = re.sub('[\/:*?"<>|]', " ",name)  # 獲取標題 以window檔案命名規則 當作檔名
         # self.downloadm3u8(url,currentname)
-        load_proxies_list()
-        print(get_random_proxies())
+        return
 
     def downloadm3u8(self, m3u8listUrl, fileName):
         print(m3u8listUrl)

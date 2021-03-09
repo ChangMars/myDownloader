@@ -7,27 +7,29 @@ from django.http import HttpResponse
 
 from django.shortcuts import render
 from fake_useragent import UserAgent
-from requests import Response
 from rest_framework.views import APIView
-from werkzeug.wsgi import FileWrapper
 
 from app.models import get_uuid
 from mydownloader.settings import BASE_DIR
-from app.module.utils.load_proxies_list import load_proxies_list, get_random_proxies
 
 
 class M3u8downloadAPIView(APIView):
     def get(self, request):
         url = request.GET['url']
-        # name = request.GET['name']
-        # currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
-        # name = self.downloadm3u8(url)
+        name = request.GET['name']
+        currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
+        file_path = self.downloadm3u8(url, currentname)
+        '''轉址到video頁面'''
+        return render(request, 'index.html',locals())
+
+        '''轉址到video頁面'''
         # return render(request, 'video.html',locals())
-        file_path = self.downloadm3u8(url)
-        videofile = open(file_path, 'rb')  # 讀取tslist
-        response = HttpResponse(FileWrapper(videofile), content_type='application/video')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % 'video.mp4'
-        return response
+
+        '''直接下載'''
+        # videofile = open(file_path, 'rb')  # 讀取tslist
+        # response = HttpResponse(FileWrapper(videofile), content_type='application/video')
+        # response['Content-Disposition'] = 'attachment; filename="%s"' % 'video.mp4'
+        # return response
 
     def getHeader(self):
         return {
@@ -46,10 +48,10 @@ class M3u8downloadAPIView(APIView):
         mysession = requests.session()
         tsUrl = m3u8listUrl.split('?')[0]
         videoTag = tsUrl.split("/")[-1]
-        load_proxies_list()
-        proxy = get_random_proxies()
-        print(proxy)
-        rests = mysession.get(m3u8listUrl, headers=self.getHeader(), proxies=proxy)  # 獲取.ts list網址
+        # load_proxies_list()
+        # proxy = get_random_proxies()
+        # print(proxy)
+        rests = mysession.get(m3u8listUrl, headers=self.getHeader())  # 獲取.ts list網址
         folder_path = str(BASE_DIR) + '//m3u8_download//' + fileName + '//'
         print(folder_path)
 
@@ -93,7 +95,7 @@ class M3u8downloadAPIView(APIView):
             thread.join()
         threads.clear()
         self.alltscombination(folder_path, fileName, upfolder_path)  # 將所有.ts合併成mp4
-        # shutil.rmtree(folder_path)  # 移除下載.ts的資料夾
+        shutil.rmtree(folder_path)  # 移除下載.ts的資料夾
         # return "//result//" + fileName + ".mp4"
         return upfolder_path + fileName + ".mp4"
 
