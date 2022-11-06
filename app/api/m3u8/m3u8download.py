@@ -11,14 +11,15 @@ from rest_framework.views import APIView
 
 from app.models import get_uuid
 from mydownloader.settings import BASE_DIR
-
+from bs4 import BeautifulSoup
 
 class M3u8downloadAPIView(APIView):
     def get(self, request):
         url = request.GET['url']
-        name = request.GET['name']
-        currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
-        file_path = self.downloadm3u8(url, currentname)
+        self.getm3u8(url)
+        # name = request.GET['name']
+        # currentname = re.sub('[\/:*?"<>|]', " ", name)  # 獲取標題 以window檔案命名規則 當作檔名
+        # file_path = self.downloadm3u8(url, currentname)
         '''轉址到video頁面'''
         return render(request, 'index.html',locals())
 
@@ -30,6 +31,47 @@ class M3u8downloadAPIView(APIView):
         # response = HttpResponse(FileWrapper(videofile), content_type='application/video')
         # response['Content-Disposition'] = 'attachment; filename="%s"' % 'video.mp4'
         # return response
+    def getm3u8(self,url2):
+        url = url2
+        user_agent = UserAgent().random
+        headers = {
+            "User-Agent": user_agent
+        }
+        session_requests = requests.session()
+        res = session_requests.get(url, headers=headers)
+        # print(res.headers)
+        soup = BeautifulSoup(res.text, 'html5lib')
+        title = soup.find_all('title')
+        currentname = re.sub('[\/:*?"<>| ]', "", str(title[0])).replace('title', '')  # 獲取標題 以window檔案命名規則 當作檔名
+        iframexx = soup.find_all('iframe')
+        # for iframe in iframexx:
+        #     print(iframe)
+        # print(iframexx[4])
+        # print(iframexx[4].attrs['src'])
+        h2 = {
+            "Host": 'hbo6.hboav.com',
+            "Referer": url
+        }
+        res2 = session_requests.get(iframexx[4].attrs['src'], headers=h2)
+        # print(res2.text)
+        # for line in res2.text:
+        #     r = re.match("http", line)
+        #     if r != None:
+        #         print(line)
+        soup = BeautifulSoup(res2.text, 'html5lib')
+        httm = soup.find_all('video')
+        # datalist = re.findall('\[.[^]]*]', res2.text)  # 抓出所有以[]包起來的字串
+        for h in httm:
+            videom3u8 = re.findall('https:.*', str(h))  # .group(0).replace('\\', '').replace('"', '').replace(']','')
+            print(videom3u8)
+        c = []
+        for v in videom3u8:
+            c.append(v.replace('\');', ''))
+        print(c)
+        # print(httm)
+        url = c[2]
+        self.downloadm3u8(url, currentname)
+        return
 
     def getHeader(self):
         return {
@@ -55,7 +97,7 @@ class M3u8downloadAPIView(APIView):
         folder_path = str(BASE_DIR) + '//m3u8_download//' + fileName + '//'
         print(folder_path)
 
-        upfolder_path = str(BASE_DIR) + '//static//result//'
+        upfolder_path = str(BASE_DIR) + '\\static\\result\\'
         if os.path.exists(folder_path) == False:  # 判斷資料夾是否存在
             os.makedirs(folder_path)  # 創建資料夾
 
@@ -121,8 +163,8 @@ class M3u8downloadAPIView(APIView):
             if savefile_dir != None and os.path.exists(savefile_dir) == False:
                 os.makedirs(savefile_dir)  # 創建資料夾
             savepath = savefile_name + '.mp4' if savefile_dir == None else savefile_dir + savefile_name + '.mp4'
-            # shell_str = 'copy /b *.ts ' + savepath
-            shell_str = 'cat *.ts > ' + savepath
+            shell_str = 'copy /b *.ts ' + savepath
+            # shell_str = 'cat *.ts > ' + savepath
             print(shell_str)
             os.system(shell_str)
             os.chdir(savefile_dir)  # 改變正在使用的目錄 防止使用中

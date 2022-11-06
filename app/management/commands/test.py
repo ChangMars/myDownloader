@@ -7,14 +7,53 @@ import requests
 from django.core.management import BaseCommand
 from fake_useragent import UserAgent
 from mydownloader.settings import BASE_DIR
-
+from bs4 import BeautifulSoup
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # url = 'https://cp3.hboav.com/check/hbo7/hls/files/mp4/B/h/K/BhKKX.mp4/index.m3u8?key=Lyl6f_9Es-grPLsTDITshg&expires=1614791358'
-        # # url = 'https://fdc.91p49.com//m3u8/429024/429024.m3u8?st=DXSN1P87-e7-lOszaZ-19Q&e=1612974034&f=0b016qJEsOGQQbi3KF8JXHbivaGsxy/bPk1Yg0nrJsRpIQ7/qv2f157uBKiTGwId1zC4pTsZvs7GpHbAaJnYBoZ1uf2giFXc6bVEDg46BxjWS3weROnrk/ahcDeIIMN7hp1vQg'
-        # name = '步賓探花今晚約個高顏值好身材牛仔褲大奶妹啪啪'
+        # url = 'https://cp2.hboav.com/check/hbo8/hls/files/mp4/q/I/v/qIvUh.mp4/index.m3u8?key=B08z-je2HCIQvkKtipxFvw&expires=1658674607'
+        # name = '大神南橘子約炮非常有趣的八字奶少婦不讓拍臉看到鏡頭就躲'
         # currentname = re.sub('[\/:*?"<>|]', " ",name)  # 獲取標題 以window檔案命名規則 當作檔名
         # self.downloadm3u8(url,currentname)
+
+        url = 'https://5278.cc/thread-1114274-1-1.html'
+        user_agent = UserAgent().random
+        headers = {
+            "User-Agent": user_agent
+        }
+        session_requests = requests.session()
+        res = session_requests.get(url, headers=headers)
+        # print(res.headers)
+        soup = BeautifulSoup(res.text, 'html5lib')
+        title = soup.find_all('title')
+        currentname = re.sub('[\/:*?"<>| ]', "", str(title[0])).replace('title','')  # 獲取標題 以window檔案命名規則 當作檔名
+        iframexx = soup.find_all('iframe')
+        # for iframe in iframexx:
+        #     print(iframe)
+        # print(iframexx[4])
+        # print(iframexx[4].attrs['src'])
+        h2 = {
+            "Host": 'hbo6.hboav.com',
+            "Referer": url
+        }
+        res2 = session_requests.get(iframexx[4].attrs['src'], headers=h2)
+        # print(res2.text)
+        # for line in res2.text:
+        #     r = re.match("http", line)
+        #     if r != None:
+        #         print(line)
+        soup = BeautifulSoup(res2.text, 'html5lib')
+        httm = soup.find_all('video')
+        # datalist = re.findall('\[.[^]]*]', res2.text)  # 抓出所有以[]包起來的字串
+        for h in httm:
+            videom3u8 = re.findall('https:.*', str(h)) #.group(0).replace('\\', '').replace('"', '').replace(']','')
+            print(videom3u8)
+        c = []
+        for v in videom3u8:
+            c.append(v.replace('\');',''))
+        print(c)
+        # print(httm)
+        url = c[2]
+        self.downloadm3u8(url,currentname)
         return
 
     def downloadm3u8(self, m3u8listUrl, fileName):
@@ -66,7 +105,7 @@ class Command(BaseCommand):
             thread.join()
         threads.clear()
         self.alltscombination(folder_path, fileName, upfolder_path)  # 將所有.ts合併成mp4
-        shutil.rmtree(folder_path)  # 移除下載.ts的資料夾
+        # shutil.rmtree(folder_path)  # 移除下載.ts的資料夾
 
     def downloadtsfile(self, url, filename, folder_path=None):
         response = requests.get(url, stream=True)
