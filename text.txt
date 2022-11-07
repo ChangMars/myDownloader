@@ -1,0 +1,16 @@
+Vue 佈署
+https://www.zhihu.com/question/46630687
+https://segmentfault.com/a/1190000010098126
+https://segmentfault.com/a/1190000010205995
+https://devs.tw/post/60
+https://a091234765.pixnet.net/blog/post/400574336-%5Bvue.js%E6%95%99%E5%AD%B8%E7%AD%86%E8%A8%98%5Dwebpack%E6%A8%A1%E7%B5%84%E6%95%B4%E5%90%88%E5%B7%A5%E5%85%B7%E4%B9%8B%E5%AE%89%E8%A3%9D
+https://www.jianshu.com/p/9cd486172251
+https://blog.51cto.com/u_11990719/5626243
+https://www.zendei.com/article/82144.html
+https://blog.csdn.net/qq_48536930/article/details/118605468
+https://router.vuejs.org/zh/guide/essentials/history-mode.html#html5-%E6%A8%A1%E5%BC%8F
+https://happyhand.github.io/2019/02/14/vue-%E9%9A%A8%E6%89%8B%E7%AD%86%E8%A8%98-IIS-%E6%9E%B6%E8%A8%AD-vue-%E7%AB%99%E5%8F%B0/#%E5%BB%BA%E7%BD%AE%E7%B6%B2%E9%A0%81
+https://www.cnblogs.com/junchu25/p/10762916.html
+https://www.cnblogs.com/smile-fanyin/p/15480419.html
+https://iter01.com/565898.html
+http://localhost:70/dist/#/login
