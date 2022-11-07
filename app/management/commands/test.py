@@ -17,10 +17,12 @@ class Command(BaseCommand):
         # self.downloadm3u8(url,currentname)
 
         '''透過txt讀取5278網址下載'''
-        with open('text.txt', 'r', encoding='UTF-8') as fh:
+        with open('text3.txt', 'r', encoding='UTF-8') as fh:
             linelist = fh.readlines()
-        for ls in linelist:
-            self.get5278m3u8(ls, '')
+        for idx,ls in enumerate(linelist):
+            if idx != 0:
+                print(ls.replace('\n', ''))
+                self.get5278m3u8(ls.replace('\n', ''), '')
         return
     def get5278m3u8(self, strurl, strname):
         url = strurl
@@ -34,6 +36,7 @@ class Command(BaseCommand):
         soup = BeautifulSoup(res.text, 'html5lib')
         title = soup.find_all('title')  # 獲取標頭
         currentname = re.sub('[\/:*?"<>| ]', "", str(title[0])).replace('title', '') if strname == '' else strname # 獲取標題 以window檔案命名規則 當作檔名
+        print(currentname)
         iframexx = soup.find_all('iframe')  # 獲取所有嵌入頁面網址
         # for iframe in iframexx:
         #     print(iframe)
@@ -43,29 +46,41 @@ class Command(BaseCommand):
             "Host": 'hbo6.hboav.com',
             "Referer": url
         }
-        res2 = session_requests.get(iframexx[4].attrs['src'], headers=h2)  # 獲取子頁面html
-        # print(res2.text)
-        # for line in res2.text:
-        #     r = re.match("http", line)
-        #     if r != None:
-        #         print(line)
-        soup = BeautifulSoup(res2.text, 'html5lib')
-        videotag = soup.find_all('video')
-        # datalist = re.findall('\[.[^]]*]', res2.text)  # 抓出所有以[]包起來的字串
-        allhttp = []
-        for vt in videotag:
-            allhttp.append(re.findall('https:.*', str(vt)))  # 獲取所有http連結
-        print(allhttp)
-        # print(httm)
-        m3u8http = []
-        for h in allhttp:
-            if 'm3u8' in h:
-                m3u8http.append(h.replace('\');', ''))  # 處理http連結
-        print(m3u8http)
-        for idx, mh in m3u8http:
+        # print(iframexx)
+        ahbo6http = []
+        for iframe in iframexx:
+            if "Player" in iframe.attrs['src']:
+                ahbo6http.append(iframe.attrs['src'])
+        print(ahbo6http)
+        for idx,hbo6http in enumerate(ahbo6http):
             if idx != 0:
-                currentname = currentname + str("({0})", idx)
-            self.downloadm3u8(mh, currentname)
+                currentname = currentname + str(idx)
+            res2 = session_requests.get(hbo6http, headers=h2)  # 獲取子頁面html
+            # print(res2.text)
+            # for line in res2.text:
+            #     r = re.match("http", line)
+            #     if r != None:
+            #         print(line)
+            soup = BeautifulSoup(res2.text, 'html5lib')
+            videotag = soup.find_all('video')
+            # datalist = re.findall('\[.[^]]*]', res2.text)  # 抓出所有以[]包起來的字串
+            allhttp = []
+            for vt in videotag:
+                allhttp.append(re.findall('https:.*', str(vt)))  # 獲取所有http連結
+            # print(allhttp)
+            # print(httm)
+            m3u8http = []
+            for ah in allhttp:
+                for h in ah:
+                    # print(h)
+                    if 'm3u8' in h:
+                        m3u8http.append(h.replace('\');', ''))  # 處理http連結
+            print(m3u8http)
+            for idx, mh in enumerate(m3u8http):
+                if idx != 0:
+                    currentname = currentname + str("({0})", idx)
+                print(currentname)
+                self.downloadm3u8(mh, currentname)
         return
 
     def downloadm3u8(self, m3u8listUrl, fileName):
